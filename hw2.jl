@@ -1,11 +1,11 @@
 ### A Pluto.jl notebook ###
-# v0.16.1
+# v0.16.4
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 437c0f11-0653-4357-bde5-afb078ad7153
-using DataFrames, PlutoUI
+using DataFrames, Distributions, PlutoUI
 
 # ╔═╡ cf652126-2b97-11ec-2841-37a3a45b0cc1
 md"""
@@ -21,7 +21,7 @@ md"""
 
 # ╔═╡ 85aa526d-2cfb-45ea-95dd-eeef52465dda
 md"""
-#### Table 3.1
+##### Table 3.1
 """
 
 # ╔═╡ a859b470-16cd-4e4f-a982-477000ecb33a
@@ -43,11 +43,11 @@ A A B B
 		:yield2 => [parse(Float64, x) for x in split(table3_1_data[4])],
 		:avg_yield => [parse(Float64, x) for x in split(table3_1_data[5])]
 	)
-end
+end;
 
 # ╔═╡ b4e1384f-d57a-49ba-bb52-e2880d1c62f2
 md"""
-#### Table 3.2
+##### Table 3.2
 """
 
 # ╔═╡ e3f7ac7b-afdc-488b-b818-420a15aacd19
@@ -60,11 +60,11 @@ table3_2 = Dict(
 	:effect_C_σ => 1.8,
 	:effect_TC_μ => -8.5,
 	:effect_TC_σ => 1.8
-)
+);
 
 # ╔═╡ 5cfc7d0f-fe05-40ac-9354-bce90594ffb0
 md"""
-#### Table 3.3
+##### Table 3.3
 """
 
 # ╔═╡ be01664b-b1a6-43c7-b27f-cf9de91f480d
@@ -88,11 +88,11 @@ begin
 		:factors => factors,
 		:runs => runs
 	)
-end
+end;
 
 # ╔═╡ dda25c43-701d-4dfd-8f74-339d9144a463
 md"""
-#### Table 3.8
+##### Table 3.8
 """
 
 # ╔═╡ 93fdd16a-dae3-48a4-a34e-fe247d750472
@@ -113,7 +113,7 @@ table3_8 = Dict(
 	134 => -0.625,
 	234 => 0.375,
 	1234 => 0.375
-)
+);
 
 # ╔═╡ c7e03a1c-896c-4db4-8e76-3c299c05b14c
 md"""
@@ -126,8 +126,11 @@ md"""
 
 # ╔═╡ ef0dee97-07d2-4cf8-91c0-c41af2d3c434
 md"""
-!!! note
-	boring
+Determining the effect of a specific gene on eye color (can't think of one from my AI research...)
+
+The most likely factors would be the presence of specific allele combinations (blue/blue, blue/green, green/brown, etc.)
+
+The presence of specific versions of other genes (i.e. ones that are different from the classic "eye color" gene) could be confounding variables.  Epigenetic differences could contribute to noise.
 """
 
 # ╔═╡ 9c619ca0-8d2c-4c07-acc1-156792ea86cf
@@ -155,8 +158,11 @@ $T = \frac{\bar y_2+\bar y_4}{2} - \frac{\bar y_1+\bar y_3}{2}$
 
 $C=\frac{\bar y_3+\bar y_4}{2}-\frac{\bar y_1+\bar y_2}{2}$
 
-!!! note
-	??? think have to show TC from above is same as TC from another formulation for T and C...
+$\mathbf{TC} = \frac{(\bar y_4-\bar y_3)-(\bar y_2-\bar y_1)}{2} = \frac{\bar y_1+\bar y_4-\bar y_2-\bar y_3}{2}$
+
+$\mathbf{CT} = \frac{(\bar y_4-\bar y_2)-(\bar y_3-\bar y_1)}{2} = \frac{\bar y_1+\bar y_4-\bar y_2-\bar y_3}{2}$
+
+$\therefore \mathbf{TC} = \mathbf{CT}$
 """
 
 # ╔═╡ dd411de7-0b7a-4267-bcec-df024a92bc9f
@@ -166,10 +172,34 @@ md"""
 *Demonstrate that for any pair of numerical values $s^2=d^2/2$; where $d$ is the difference between the two values. Use this result and show that for a set of n duplicate runs (i.e., each run repeated only once, as in Table 3.1) the pooled estimate of the variance is $s^2=\sum \frac{d^2_i}{2n}$*
 """
 
+# ╔═╡ 1b0db06b-6470-4388-b944-401ab6083c84
+table3_1
+
 # ╔═╡ d824f3e4-972c-4dcc-935c-56204e20a3ba
 md"""
-!!! note
-	???
+$s^2=\frac{\sum_i(x_i-\bar x_i)^2}{n-1}$
+
+$\bar x = \frac{1}{2}(x_{1}+x_{2})$
+
+$n-1 = 1$
+
+$s^2=\sum_i\left(x_i-\frac{1}{2}(x_{1}+x_{2})\right)^2
+
+=
+\left(x_1-\frac{1}{2}(x_{1}+x_{2})\right)^2 + 
+\left(x_2-\frac{1}{2}(x_{1}+x_{2})\right)^2$
+
+$=
+\left(\frac{1}{2}(x_{1}-x_{2})\right)^2 + 
+\left(\frac{1}{2}(x_{1}-x_{2})\right)^2$
+
+$d^2=(x_1-x_2)^2$
+
+$s^2=\frac{d^2}{2}$
+
+Pooled estimate:
+
+$s^2=\sum_i\frac{d^2_i}{2n}$
 """
 
 # ╔═╡ 8e437aec-1383-4e61-bf61-dbf2af843ec9
@@ -179,12 +209,20 @@ md"""
 *According to Table 3.2, the standard error of the grand average is half the standard error of the effects. Use Eq. (2.15) to show that this has to be true.*
 """
 
+# ╔═╡ 43bc4ef6-0003-44be-a6a9-19a516f02c08
+table3_2
+
 # ╔═╡ bfcbe20f-7100-4dc7-b44c-999573b506cf
 md"""
 $\sigma_{\bar x}^2=\sum_i\frac{1}{n^2}\sigma^2=\frac{\sigma^2}{n}$
 
-!!! note
-	???
+$\sigma_e^2=\sigma^2(\bar y_+)+\sigma^2(\bar y_-)=4\frac{\sigma^2}{n}$
+
+$\sigma_{\bar x}=\frac{\sigma}{\sqrt n}$
+
+$\sigma_e=2\frac{\sigma}{\sqrt n}$
+
+$\therefore \sigma_e=2\sigma_{\bar y}$
 """
 
 # ╔═╡ 96041c6f-2777-4d07-a93e-ce9fa6e788c5
@@ -194,10 +232,20 @@ md"""
 *The observations listed below were recorded in genuine replicates of the different runs. Calculate a pooled estimate of the experimental error associated with these observations. How many degrees of freedom does this estimate have?*
 """
 
+# ╔═╡ 7b661c38-8647-467e-a8d0-f68f70162e0e
+LocalResource("e3_6.png")
+
 # ╔═╡ 19671a0f-158e-4da5-8ab6-04092fc670fe
 md"""
-!!! note
-	???
+$\sigma^2=\frac{1}{R}\sum_r \sigma^2_r$
+
+where $R$ is the number of different runs and $r$ the specific observation.
+
+$\sigma^2=\frac{3*6.33+2*4.5+4*4.92+3*16.00}{3+2+4+3} = 7.97$
+
+$\sigma=2.83$
+
+$v_T=12$
 """
 
 # ╔═╡ f8a25f7f-c40c-43d0-86e2-6ade66754b80
@@ -219,8 +267,11 @@ begin
 	)
 	
 	md"""
-	!!! note
-		???
+	$\mathbf{F_1}=\frac{-\bar y_1 +\bar y_2-\bar y_3+\bar y_4}{2}=-1.57$
+	
+	$\mathbf{F_2}=\frac{-\bar y_1-\bar y_2+\bar y_3+\bar y_4}{2}=-2.45$
+	
+	$\mathbf{F_{12}}=\mathbf{F_2}-\mathbf{F_1}=0.88$
 	"""
 end
 
@@ -261,12 +312,6 @@ A⁻¹
 # ╔═╡ 7d9a75a4-34cb-464c-a779-fa24279a3387
 A⁻¹e
 
-# ╔═╡ 3daece08-754d-4e54-b8a0-62f95f8bb170
-md"""
-!!! note
-	X and b?
-"""
-
 # ╔═╡ 571e7966-3c7a-443d-be5d-8d3b398c4984
 md"""
 #### Exercise 3.9
@@ -275,7 +320,14 @@ md"""
 """
 
 # ╔═╡ 9af51599-56c4-42cb-bd27-d81423b285ab
+table3_3[:runs]
 
+# ╔═╡ 36e06637-2b71-4707-add5-7254640b627c
+md"""
+$\mathbf{12}(-) = \frac{1}{2}(y_1-y_2-(y_3-y_4)) = -8.75$
+$\mathbf{12}(+) = \frac{1}{2}(y_5-y_6-(y_7-y_8)) = -8.50$
+$\mathbf{123} = \frac{1}{2}(\mathbf{12}(+)-\mathbf{12}(-)) = 0.125$
+"""
 
 # ╔═╡ 1862ece6-a162-4dd9-a711-cd0976d956dd
 md"""
@@ -285,7 +337,17 @@ md"""
 """
 
 # ╔═╡ 6232ed69-a202-4780-9ddb-2e0697f27295
+md"""
+$\sigma_y^2=\sum_ia_i^2\sigma_i^2$
 
+$\mathbf{T}=\bar y_+-\bar y_-$
+
+$\mathbf{V}=V(\bar y_+-\bar y_-)=\frac{4s^2}{n}$
+
+$n=2^3$
+
+$\mathbf{V}=\frac{1}{2}s^2$
+"""
 
 # ╔═╡ a158541c-4455-4a4b-bc78-45cf28517672
 md"""
@@ -295,7 +357,19 @@ md"""
 """
 
 # ╔═╡ c03f212f-3f06-4815-8969-d52f1f990a3e
+md"""
+$\mathbf{t}=\frac{1}{4}(5.98+20.34+3.27+18.69) - \frac{1}{4}(4.56+13.98+2.01+12.23)=3.88$
 
+$\mathbf{C}=12.36$
+
+$\mathbf{P}=-2.17$
+
+$\mathbf{tC}=\frac{1}{2}(18.69-2.01)-\frac{1}{2}(20.34-4.56)=0.45$
+
+$\mathbf{tP}=-0.02$
+
+$\mathbf{CP}=2.54$
+"""
 
 # ╔═╡ cd63ec55-4385-49a5-8593-4ce40683a572
 md"""
@@ -305,7 +379,9 @@ md"""
 """
 
 # ╔═╡ 143da4e1-08cb-44a1-8967-fa3b35a7cb8a
-
+md"""
+Increasing temperature is good.  Increasing catalyst is bad.  The negative effect of increasing catalyst is more severe at higher temperature.
+"""
 
 # ╔═╡ 68bb4e2b-e52e-414d-bfd3-d2158a8c0fb6
 md"""
@@ -315,7 +391,9 @@ md"""
 """
 
 # ╔═╡ 821d8f0c-a99a-4385-b59c-55ae3d7d6471
-
+md"""
+A contrast between tetrahedra
+"""
 
 # ╔═╡ f759d31a-775e-4b51-bb86-f1b4e2ab88ee
 md"""
@@ -325,7 +403,19 @@ md"""
 """
 
 # ╔═╡ 2fcf0c1e-b6e8-42bc-950c-87c488f660c1
+begin
+	local C = [1 1 1 1 1 1 1 1; -1 1 -1 1 -1 1 -1 1; -1 -1 1 1 -1 -1 1 1; -1 -1 -1 -1 1 1 1 1; 1 -1 -1 1 1 -1 -1 1; 1 -1 1 -1 -1 1 -1 1; 1 1 -1 -1 -1 -1 1 1; -1 1 1 -1 1 -1 -1 1]'
+	
+	ŷ = C * [67.3; 11.4; -6.9; 4.4; -4.3; 0; 0; 0]
+end
 
+# ╔═╡ 7f6b0c52-031e-4cf8-a6a0-d91f4628b518
+[54; 86.5; 48; 63; 63; 93.5; 58.5; 72] - ŷ
+
+# ╔═╡ f614ace5-a72d-45e5-9044-68fd15132d37
+md"""
+The residuals are very small, so this simplified model is still quite good.
+"""
 
 # ╔═╡ c2104f2c-daa7-4c7a-9cfb-e9cbe316cc17
 md"""
@@ -335,7 +425,14 @@ md"""
 """
 
 # ╔═╡ 30bc3a77-0876-46ea-a884-0aa90f088a43
+md"""
+$\hat y(x_1x_2x_3x_4)=$
 
+$b_0+b_1x_1+b_2x_2+b_3x_3+b_4x_4+b_{12}x_1x_2+b_{13}x_1x_3+b_{14}x_1x_4+b_{23}x_2x_3+b_{24}x_2x_4$
+
+$+b_{34}x_3x_4+b_{123}x_1x_2x_3+b{124}x_1x_2x_4+b{134}x_1x_3x_4
+b_{234}x_2x_3x_4+b_{1234}x_1x_2x_3x_4$
+"""
 
 # ╔═╡ 41417e32-16f0-437e-b004-29c8267a6f25
 md"""
@@ -345,7 +442,23 @@ md"""
 """
 
 # ╔═╡ 284df92b-5419-48c6-bf3b-1cdccff61352
+table3_8
 
+# ╔═╡ a2f0bf4b-6117-4a53-bd55-f44ed5b97a6a
+md"""
+$s=0.54$
+
+ $0.95$ CI, $5$ DoF:
+
+$t=2.571$
+
+$st=1.388$
+
+Significant effects:
+"""
+
+# ╔═╡ 6947259a-6c5a-43bb-a658-bde714a34ceb
+[key for key in keys(table3_8) if isa(key, Int) && abs(table3_8[key]) > 1.388]
 
 # ╔═╡ 64a303a9-a7b2-4ebe-b7d0-fd9bf87497a0
 md"""
@@ -368,7 +481,7 @@ md"""
 """
 
 # ╔═╡ efedf029-8791-4f50-85a4-ad6098bb41a0
-0.68 + (1 - 0.68)/2
+round(0.68 + (1 - 0.68)/2, digits=2) # 68 % + tail of distribution
 
 # ╔═╡ 73b283ea-5c6f-47ab-a18d-bcc55ac39c32
 md"""
@@ -376,7 +489,7 @@ md"""
 """
 
 # ╔═╡ ff876fc5-97b5-45d8-9a30-2a916b65837f
-
+cdf(Normal(), 1.96) # cumulative density function on normal distribution
 
 # ╔═╡ 1f2619fe-108b-45ca-9590-0fb4d6e4d841
 md"""
@@ -386,7 +499,17 @@ md"""
 """
 
 # ╔═╡ 5567831d-1afe-4fb8-b984-1b2e7eb063e1
+md"""
+$V_{11}=\frac{3(-0.625)^2+(-0.125)^2+3(0.325)^2+4(0.8755)^2}{11}=0.425$
 
+$V_5=0.291$
+
+$\frac{V_{11}}{V_5}=1.459$
+
+$F_{11/5,95\%}=4.71$
+
+Since the F-test value is much higher than the ratio of variances, we can say the estimates come from the same population.
+"""
 
 # ╔═╡ d2520730-6ebb-47c0-9a94-707614756d3b
 md"""
@@ -396,7 +519,9 @@ md"""
 """
 
 # ╔═╡ c38ec110-760e-4a3d-8ffa-18810f022cd1
-
+md"""
+The $\mathbf{123}$ interaction is confounded with the batch effect.
+"""
 
 # ╔═╡ e3c67134-a4fb-4b70-9232-e363d1320a88
 md"""
@@ -406,16 +531,28 @@ md"""
 """
 
 # ╔═╡ 3ecc0c3a-27d3-4786-bb57-ab37181841f9
+md"""
+Without systematic error:
 
+$\mathbf{23}=\frac{1}{4}(y_1+y_2+y_7+y_8-y_3-y_4-y_5-y_6)$
+
+With systematic error affecting runs $2, 3, 5, 8$:
+
+$\mathbf{23}=\frac{1}{4}(y_1+y_2+h+y_7+y_8+h-y_3-h-y_4-y_5-h-y_6)$
+
+So the $h$ terms cancel and the value of $\mathbf{23}$ is unaffected.
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 DataFrames = "~1.2.2"
+Distributions = "~0.25.23"
 PlutoUI = "~0.7.16"
 """
 
@@ -432,11 +569,21 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
+[[ChainRulesCore]]
+deps = ["Compat", "LinearAlgebra", "SparseArrays"]
+git-tree-sha1 = "3533f5a691e60601fe60c90d8bc47a27aa2907ec"
+uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+version = "1.11.0"
+
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
 git-tree-sha1 = "31d0151f5716b655421d9d75b7fa74cc4e744df2"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
 version = "3.39.0"
+
+[[CompilerSupportLibraries_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 
 [[Crayons]]
 git-tree-sha1 = "3f71217b538d7aaee0b69ab47d9b7724ca8afa0d"
@@ -477,9 +624,27 @@ uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
+[[Distributions]]
+deps = ["ChainRulesCore", "FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsBase", "StatsFuns"]
+git-tree-sha1 = "d249ebaa67716b39f91cf6052daf073634013c0f"
+uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
+version = "0.25.23"
+
+[[DocStringExtensions]]
+deps = ["LibGit2"]
+git-tree-sha1 = "b19534d1895d702889b219c382a6e18010797f0b"
+uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+version = "0.8.6"
+
 [[Downloads]]
 deps = ["ArgTools", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+
+[[FillArrays]]
+deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
+git-tree-sha1 = "8756f9935b7ccc9064c6eef0bff0ad643df733a3"
+uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
+version = "0.12.7"
 
 [[Formatting]]
 deps = ["Printf"]
@@ -498,9 +663,9 @@ uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
 version = "0.0.4"
 
 [[HypertextLiteral]]
-git-tree-sha1 = "f6532909bf3d40b308a0f360b6a0e626c0e263a8"
+git-tree-sha1 = "5efcf53d798efede8fee5b2c8b09284be359bf24"
 uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
-version = "0.9.1"
+version = "0.9.2"
 
 [[IOCapture]]
 deps = ["Logging", "Random"]
@@ -512,15 +677,32 @@ version = "0.2.2"
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
+[[InverseFunctions]]
+deps = ["Test"]
+git-tree-sha1 = "f0c6489b12d28fb4c2103073ec7452f3423bd308"
+uuid = "3587e190-3f89-42d0-90ee-14403ec27112"
+version = "0.1.1"
+
 [[InvertedIndices]]
 git-tree-sha1 = "bee5f1ef5bf65df56bdd2e40447590b272a5471f"
 uuid = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
 version = "1.1.0"
 
+[[IrrationalConstants]]
+git-tree-sha1 = "7fd44fd4ff43fc60815f8e764c0f352b83c49151"
+uuid = "92d709cd-6900-40b7-9082-c6be49f344b6"
+version = "0.1.1"
+
 [[IteratorInterfaceExtensions]]
 git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
 uuid = "82899510-4779-5014-852e-03e436cf321d"
 version = "1.0.0"
+
+[[JLLWrappers]]
+deps = ["Preferences"]
+git-tree-sha1 = "642a199af8b68253517b80bd3bfd17eb4e84df6e"
+uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
+version = "1.3.0"
 
 [[JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
@@ -551,6 +733,12 @@ uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 deps = ["Libdl"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
+[[LogExpFunctions]]
+deps = ["ChainRulesCore", "DocStringExtensions", "InverseFunctions", "IrrationalConstants", "LinearAlgebra"]
+git-tree-sha1 = "6193c3815f13ba1b78a51ce391db8be016ae9214"
+uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
+version = "0.3.4"
+
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
@@ -577,16 +765,32 @@ uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 [[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 
+[[OpenLibm_jll]]
+deps = ["Artifacts", "Libdl"]
+uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
+
+[[OpenSpecFun_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "13652491f6856acfd2db29360e1bbcd4565d04f1"
+uuid = "efe28fd5-8261-553b-a9e1-b2916fc3738e"
+version = "0.5.5+0"
+
 [[OrderedCollections]]
 git-tree-sha1 = "85f8e6578bf1f9ee0d11e7bb1b1456435479d47c"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 version = "1.4.1"
 
+[[PDMats]]
+deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
+git-tree-sha1 = "4dd403333bcf0909341cfe57ec115152f937d7d8"
+uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
+version = "0.11.1"
+
 [[Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "a8709b968a1ea6abc2dc1967cb1db6ac9a00dfb6"
+git-tree-sha1 = "d911b6a12ba974dabe2291c6d450094a7226b372"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.0.5"
+version = "2.1.1"
 
 [[Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -604,6 +808,12 @@ git-tree-sha1 = "a193d6ad9c45ada72c14b731a318bedd3c2f00cf"
 uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 version = "1.3.0"
 
+[[Preferences]]
+deps = ["TOML"]
+git-tree-sha1 = "00cfd92944ca9c760982747e9a1d0d5d86ab1e5a"
+uuid = "21216c6a-2e73-6563-6e65-726566657250"
+version = "1.2.2"
+
 [[PrettyTables]]
 deps = ["Crayons", "Formatting", "Markdown", "Reexport", "Tables"]
 git-tree-sha1 = "69fd065725ee69950f3f58eceb6d144ce32d627d"
@@ -613,6 +823,12 @@ version = "1.2.2"
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+
+[[QuadGK]]
+deps = ["DataStructures", "LinearAlgebra"]
+git-tree-sha1 = "78aadffb3efd2155af139781b8a8df1ef279ea39"
+uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
+version = "2.4.2"
 
 [[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -626,6 +842,18 @@ uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
+
+[[Rmath]]
+deps = ["Random", "Rmath_jll"]
+git-tree-sha1 = "bf3188feca147ce108c76ad82c2792c57abe7b1f"
+uuid = "79098fc4-a85e-5d69-aa6a-4863f24498fa"
+version = "0.7.0"
+
+[[Rmath_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "68db32dff12bb6127bac73c209881191bf0efbb7"
+uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
+version = "0.3.0+0"
 
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -650,9 +878,36 @@ version = "1.0.1"
 deps = ["LinearAlgebra", "Random"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
+[[SpecialFunctions]]
+deps = ["ChainRulesCore", "IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
+git-tree-sha1 = "f0bccf98e16759818ffc5d97ac3ebf87eb950150"
+uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
+version = "1.8.1"
+
 [[Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
+[[StatsAPI]]
+git-tree-sha1 = "1958272568dc176a1d881acb797beb909c785510"
+uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
+version = "1.0.0"
+
+[[StatsBase]]
+deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
+git-tree-sha1 = "eb35dcc66558b2dda84079b9a1be17557d32091a"
+uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+version = "0.33.12"
+
+[[StatsFuns]]
+deps = ["ChainRulesCore", "IrrationalConstants", "LogExpFunctions", "Reexport", "Rmath", "SpecialFunctions"]
+git-tree-sha1 = "95072ef1a22b057b1e80f73c2a89ad238ae4cfff"
+uuid = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
+version = "0.9.12"
+
+[[SuiteSparse]]
+deps = ["Libdl", "LinearAlgebra", "Serialization", "SparseArrays"]
+uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
 
 [[TOML]]
 deps = ["Dates"]
@@ -711,42 +966,49 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─dda25c43-701d-4dfd-8f74-339d9144a463
 # ╠═93fdd16a-dae3-48a4-a34e-fe247d750472
 # ╟─c7e03a1c-896c-4db4-8e76-3c299c05b14c
-# ╠═ef0dee97-07d2-4cf8-91c0-c41af2d3c434
+# ╟─ef0dee97-07d2-4cf8-91c0-c41af2d3c434
 # ╟─9c619ca0-8d2c-4c07-acc1-156792ea86cf
 # ╟─6e8fe1d7-b24a-4f15-95da-29754be3b076
 # ╟─3d9f6a75-f2b4-445d-a0bc-56358e8688f9
-# ╠═fe8a0eee-c7c6-42cc-8bfc-66966d792f6b
+# ╟─fe8a0eee-c7c6-42cc-8bfc-66966d792f6b
 # ╟─dd411de7-0b7a-4267-bcec-df024a92bc9f
-# ╠═d824f3e4-972c-4dcc-935c-56204e20a3ba
+# ╠═1b0db06b-6470-4388-b944-401ab6083c84
+# ╟─d824f3e4-972c-4dcc-935c-56204e20a3ba
 # ╟─8e437aec-1383-4e61-bf61-dbf2af843ec9
-# ╠═bfcbe20f-7100-4dc7-b44c-999573b506cf
+# ╠═43bc4ef6-0003-44be-a6a9-19a516f02c08
+# ╟─bfcbe20f-7100-4dc7-b44c-999573b506cf
 # ╟─96041c6f-2777-4d07-a93e-ce9fa6e788c5
-# ╠═19671a0f-158e-4da5-8ab6-04092fc670fe
+# ╟─7b661c38-8647-467e-a8d0-f68f70162e0e
+# ╟─19671a0f-158e-4da5-8ab6-04092fc670fe
 # ╟─f8a25f7f-c40c-43d0-86e2-6ade66754b80
-# ╠═d8509256-352d-4484-8053-eefa2a6f5f26
+# ╟─d8509256-352d-4484-8053-eefa2a6f5f26
 # ╟─daf716cf-a6fe-4887-bb75-f40d0ecebe5e
 # ╟─5363e1c6-69d5-4cbb-a224-df02a1cba6c4
 # ╟─09db9d48-f471-4b4b-9e95-11ac0a0444ac
 # ╠═831a91db-447d-4145-b0fe-c2e122bf9f60
 # ╠═6937f320-4a6b-4cfb-85bb-ffed207a769e
 # ╠═7d9a75a4-34cb-464c-a779-fa24279a3387
-# ╠═3daece08-754d-4e54-b8a0-62f95f8bb170
 # ╟─571e7966-3c7a-443d-be5d-8d3b398c4984
-# ╠═9af51599-56c4-42cb-bd27-d81423b285ab
+# ╟─9af51599-56c4-42cb-bd27-d81423b285ab
+# ╟─36e06637-2b71-4707-add5-7254640b627c
 # ╟─1862ece6-a162-4dd9-a711-cd0976d956dd
-# ╠═6232ed69-a202-4780-9ddb-2e0697f27295
+# ╟─6232ed69-a202-4780-9ddb-2e0697f27295
 # ╟─a158541c-4455-4a4b-bc78-45cf28517672
-# ╠═c03f212f-3f06-4815-8969-d52f1f990a3e
+# ╟─c03f212f-3f06-4815-8969-d52f1f990a3e
 # ╟─cd63ec55-4385-49a5-8593-4ce40683a572
-# ╠═143da4e1-08cb-44a1-8967-fa3b35a7cb8a
+# ╟─143da4e1-08cb-44a1-8967-fa3b35a7cb8a
 # ╟─68bb4e2b-e52e-414d-bfd3-d2158a8c0fb6
-# ╠═821d8f0c-a99a-4385-b59c-55ae3d7d6471
+# ╟─821d8f0c-a99a-4385-b59c-55ae3d7d6471
 # ╟─f759d31a-775e-4b51-bb86-f1b4e2ab88ee
 # ╠═2fcf0c1e-b6e8-42bc-950c-87c488f660c1
+# ╠═7f6b0c52-031e-4cf8-a6a0-d91f4628b518
+# ╟─f614ace5-a72d-45e5-9044-68fd15132d37
 # ╟─c2104f2c-daa7-4c7a-9cfb-e9cbe316cc17
-# ╠═30bc3a77-0876-46ea-a884-0aa90f088a43
+# ╟─30bc3a77-0876-46ea-a884-0aa90f088a43
 # ╟─41417e32-16f0-437e-b004-29c8267a6f25
 # ╠═284df92b-5419-48c6-bf3b-1cdccff61352
+# ╟─a2f0bf4b-6117-4a53-bd55-f44ed5b97a6a
+# ╠═6947259a-6c5a-43bb-a658-bde714a34ceb
 # ╟─64a303a9-a7b2-4ebe-b7d0-fd9bf87497a0
 # ╟─e0e4ab49-92ab-466b-94e0-fc7325c6ca08
 # ╠═671543fd-e413-4ed7-b486-a34b7b063f94
@@ -755,10 +1017,10 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─73b283ea-5c6f-47ab-a18d-bcc55ac39c32
 # ╠═ff876fc5-97b5-45d8-9a30-2a916b65837f
 # ╟─1f2619fe-108b-45ca-9590-0fb4d6e4d841
-# ╠═5567831d-1afe-4fb8-b984-1b2e7eb063e1
+# ╟─5567831d-1afe-4fb8-b984-1b2e7eb063e1
 # ╟─d2520730-6ebb-47c0-9a94-707614756d3b
-# ╠═c38ec110-760e-4a3d-8ffa-18810f022cd1
+# ╟─c38ec110-760e-4a3d-8ffa-18810f022cd1
 # ╟─e3c67134-a4fb-4b70-9232-e363d1320a88
-# ╠═3ecc0c3a-27d3-4786-bb57-ab37181841f9
+# ╟─3ecc0c3a-27d3-4786-bb57-ab37181841f9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
