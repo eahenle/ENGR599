@@ -16,7 +16,7 @@ md"""
 # ╔═╡ d3354963-13ce-484a-b43a-35d2038ff47a
 md"""
 ### Exercise 4.1. 
-Use the data in Table 4.2 to confirm that the significant effect values in this design are really the same as those appearing in Table 4.3.
+Use the data in **Table 4.2** to confirm that the significant effect values in this design are really the same as those appearing in **Table 4.3**.
 """
 
 # ╔═╡ 344eb54b-3de7-4d8d-9eb1-87887f3d30ec
@@ -49,7 +49,7 @@ all(isapprox.(factors_table4_3, factors_calc, rtol=0.0025))
 
 # ╔═╡ 56be45ae-c43a-4827-8940-99aad4086e62
 md"
-The factors $\mathbf{1}$, $\mathbf{2}$, $\mathbf{3}$, and $\mathbf{4}$ are identical to within $0.25\%$
+The factors $\mathbf{1}$, $\mathbf{2}$, $\mathbf{3}$, and $\mathbf{4}$ in **Table 4.3** are identical to those calculated from **Table 4.2** to within $0.25\%$
 "
 
 # ╔═╡ cb2a11c8-922f-44fa-b69b-9be657cea228
@@ -59,12 +59,14 @@ How many experimental runs are there in a 2^(8–4) fractional factorial?
 """
 
 # ╔═╡ 5de35dfc-6a02-4055-b4ae-00b169a19e33
-16
+md"""
+$$2^{8-4}=16$$
+"""
 
 # ╔═╡ ee642f72-4afa-4c21-a632-b0a248ea9be7
 md"""
 ### Exercise 4.5.
-All contrasts in Table 4.5 represent the sum of two effects except $\mathbf{l_I}$, which estimates the overall average plus half of the $\mathbf{1234}$ interaction. Why half?
+All contrasts in **Table 4.5** represent the sum of two effects except $\mathbf{l_I}$, which estimates the overall average plus half of the $\mathbf{1234}$ interaction. Why half?
 """
 
 # ╔═╡ 5783a64b-c6ad-4f61-9a70-1c00abdc898d
@@ -72,13 +74,22 @@ LocalResource("e4-5.png")
 
 # ╔═╡ 5427266b-864d-4109-82b6-65723161b708
 md"""
-
+The values are contrasts between two halves of the set of $16$ responses, except for $\mathbf{M}$, which is calculated on all $16$; so, $\mathbf{1234}$ must be scaled.
 """
 
 # ╔═╡ 8b3fb77d-ea00-45e6-a80f-01a8de3e8f0e
 md"""
 ### Exercise 4.7.
-How would you combine the values of the contrasts to obtain the 1234 interaction effect? Do the corresponding calculations and compare the result with the value given in Table 4.3.
+How would you combine the values of the contrasts to obtain the $\mathbf{1234}$ interaction effect? Do the corresponding calculations and compare the result with the value given in **Table 4.3**.
+"""
+
+# ╔═╡ 6f649e28-ff2f-4b0f-ac91-4a70dd89f47c
+md"""
+$$\mathbf{1234}=l_{1234}-l_{1234}^*$$
+
+$$l_{1234}=\mathbf{M}+\frac{1}{2}\mathbf{1234}$$
+
+$$l_{1234}^*=\mathbf{M}-\frac{1}{2}\mathbf{1234}$$
 """
 
 # ╔═╡ 98d2333f-aca4-409a-8abb-b521e799344e
@@ -303,8 +314,9 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─5de35dfc-6a02-4055-b4ae-00b169a19e33
 # ╟─ee642f72-4afa-4c21-a632-b0a248ea9be7
 # ╟─5783a64b-c6ad-4f61-9a70-1c00abdc898d
-# ╠═5427266b-864d-4109-82b6-65723161b708
-# ╠═8b3fb77d-ea00-45e6-a80f-01a8de3e8f0e
+# ╟─5427266b-864d-4109-82b6-65723161b708
+# ╟─8b3fb77d-ea00-45e6-a80f-01a8de3e8f0e
+# ╠═6f649e28-ff2f-4b0f-ac91-4a70dd89f47c
 # ╠═98d2333f-aca4-409a-8abb-b521e799344e
 # ╠═f44e84a7-d85c-42a4-9c2e-897d7c487f18
 # ╠═9f43d5c9-3184-485a-9e3a-d125b8c9e5d8
