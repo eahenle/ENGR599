@@ -85,9 +85,11 @@ How would you combine the values of the contrasts to obtain the $\mathbf{1234}$ 
 
 # ╔═╡ 6f649e28-ff2f-4b0f-ac91-4a70dd89f47c
 md"""
-$$\mathbf{1234}=l_{1234}-l_{1234}^* = 2 * \mathbf{1} = -4.76$$
+$$\mathbf{1234}=l_{1234}-l_{1234}^*$$
 
-This is considerably lower than the value in table 4.3
+$$l_{1234}=\mathbf{M}+\frac{1}{2}\mathbf{1234}$$
+
+$$l_{1234}^*=\mathbf{M}-\frac{1}{2}\mathbf{1234}$$
 """
 
 # ╔═╡ 98d2333f-aca4-409a-8abb-b521e799344e
@@ -96,108 +98,28 @@ md"""
 In a half-fractional factorial design of resolution VI, the main effects are confounded with what other effects? And the two-factor interactions?
 """
 
-# ╔═╡ 3e15a41c-86b9-449c-bf6e-e2ac464bae0a
-md"""
-Main effects confound with $5^{th}$ order interactions, and binary interactions confound with $4^{th}$ order.
-"""
-
 # ╔═╡ f44e84a7-d85c-42a4-9c2e-897d7c487f18
 md"""
 ### Exercise 4.11.
-Construct a 2$^{5–1}$ fractional design using $\mathbf{5} = \mathbf{124}$. Determine, for this fraction, the relations between the contrasts involving one or two factors and the effects calculated from a complete factorial. Can you imagine a situation in which this design would be preferable, instead of a fraction of maximum resolution?
-"""
-
-# ╔═╡ 0002513c-78e0-49c1-888a-c1a6c5b14bbd
-md"Design matrix:"
-
-# ╔═╡ 7a205069-193f-4894-b3d2-ae6bf88eb0e9
-hcat(hcat([repeat([repeat([-1], 2^(i-1))..., repeat([1], 2^(i-1))...], Int(8/(2^(i-1)))) for i ∈ 1:4]...), [-1. +1. +1. -1. -1. +1. +1. -1. +1. -1. -1. +1. +1. -1. -1. +1.]')
-
-# ╔═╡ e02a73c8-f797-4742-b0db-3484afd8a3fe
-md"Contrasts and effects:"
-
-# ╔═╡ 7ce86558-27e2-4c88-90dd-93a21e34acde
-md"""
-$l_{1} = \mathbf{1} + \mathbf{245}$
-$l_{2} = \mathbf{2} + \mathbf{145}$
-$l_{3} = \mathbf{3} + \mathbf{12345}$
-$l_{4} = \mathbf{4} + \mathbf{125}$
-$l_{5} = \mathbf{3} + \mathbf{124}$
-$l_{12} = \mathbf{12} + \mathbf{45}$
-$l_{13} = \mathbf{13} + \mathbf{2345}$
-$l_{14} = \mathbf{14} + \mathbf{25}$
-$l_{15} = \mathbf{15} + \mathbf{24}$
-$l_{23} = \mathbf{23} + \mathbf{1345}$
-$l_{24} = \mathbf{15} + \mathbf{24}$
-$l_{25} = \mathbf{25} + \mathbf{14}$
-$l_{34} = \mathbf{34} + \mathbf{1235}$
-$l_{35} = \mathbf{35} + \mathbf{1234}$
-$l_{45} = \mathbf{12} + \mathbf{45}$
+Construct a 2^(5–1) fractional design using 5 = 124. Determine, for this fraction, the relations between the contrasts involving one or two factors and the effects calculated from a complete factorial. Can you imagine a situation in which this design would be preferable, instead of a fraction of maximum resolution?
 """
 
 # ╔═╡ 9f43d5c9-3184-485a-9e3a-d125b8c9e5d8
 md"""
 ### Exercise 4.13.
-Use the data of **Table 4.10** to calculate the value of the contrast corresponding to the main effect of the side of the tennis court.
+Use the data of Table 4.10 to calculate the value of the contrast corresponding to the main effect of the side of the tennis court.
 """
-
-# ╔═╡ e7997c25-5e31-4c4f-8fb8-85d6711e1d34
-md"**Table 4.10** (excerpt):"
-
-# ╔═╡ 629a534a-dea9-4458-8dd4-e284556214f0
-LocalResource("4-10e.png")
-
-# ╔═╡ ec25cf92-480b-4dcb-b56b-dd21459a7290
-md"Let vector $\mathbf{p}$ be the signs of column $5$ (the court side factor):"
-
-# ╔═╡ 355cffca-f36e-492f-92a2-c45c09b9d394
-p = [+1., -1., +1., -1., -1., +1., -1., +1.]
-
-# ╔═╡ 1a0eb387-02e9-496f-b648-6ba7aa17c561
-md"Let vector $\mathbf{y}$ be the percentage of valid serves for each run:"
-
-# ╔═╡ ef4b350e-d0cb-4b94-9508-31548f6e37ae
-y = [56., 66., 51., 52., 54., 70., 42., 64.]
-
-# ╔═╡ dd0f7d07-9f83-4a58-a508-8b625b4cff42
-md"The contrast is:"
-
-# ╔═╡ a1dadded-6840-4e71-9f60-f6ebfd92d2d3
-md"""
-$l_5=\frac{1}{4}\sum_i{p_iy_i}$
-"""
-
-# ╔═╡ 8645be19-bab5-425e-9e81-ca27ebb59a39
-0.25 * sum(p .* y)
 
 # ╔═╡ ecc474c0-25e9-4207-8845-e7c0f9844f39
 md"""
 ### Exercise 4.15.
-Each run in **Tables 4.10** and **4.12** correspond to performing serves under the experimental conditions specified by the signs of the respective design matrices. Describe the experiment represented by run $4$ in **Table 4.10**. In practice, what is the difference between this run and run $4$ in **Table 4.12**?
+Each run in Tables 4.10 and 4.12 correspond to performing serves under the experimental conditions specified by the signs of the respective design matrices. Describe the experiment represented by run 4 in Table 4.10. In practice, what is the difference between this run and run 4 in Table 4.12?
 """
-
-# ╔═╡ ad085593-bd9b-45bf-8cc9-074457df766f
-md"Run $4$ of **Table 4.10** is slice, high frequency, daytime, on concrete, from the right, shirt-on, medium racquet.
-Run $4$ of **Table 4.12** has the same conditions, except the serve is from the left."
 
 # ╔═╡ 92a87a40-95b4-4ed6-a70d-648b6945e0d1
 md"""
 ### Exercise 4.17.
-Use the generating relations given in **Table 4.15** and find the three-factor interactions confounded with factor $1$.
-"""
-
-# ╔═╡ b62c814d-fc2e-43d9-8e29-065692f605fb
-md"""
-The sign of $1$ is negative, so the product of the $3$ factors' signs must be negative.
-
-Also,
-
-$\mathbf{I} = \mathbf{1248} = \mathbf{1358} = \mathbf{2368} = \mathbf{1237}$
-
-so we don't consider $\mathbf{368}$.
-That gives:
-
-$l_1 = \mathbf{1} + \mathbf{248} + \mathbf{358} + \mathbf{237} + \mathbf{346} + \mathbf{256} + \mathbf{678} + \mathbf{457}$
+Use the generating relations given in Table 4.15 and find the three-factor interactions confounded with factor 1.
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -206,7 +128,7 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-PlutoUI = "~0.7.21"
+PlutoUI = "~0.7.18"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -215,9 +137,9 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 [[AbstractPlutoDingetjes]]
 deps = ["Pkg"]
-git-tree-sha1 = "abb72771fd8895a7ebd83d5632dc4b989b022b5b"
+git-tree-sha1 = "0ec322186e078db08ea3e7da5b8b2885c099b393"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
-version = "1.1.2"
+version = "1.1.0"
 
 [[ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -314,9 +236,9 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "Dates", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
-git-tree-sha1 = "b68904528fd538f1cb6a3fbc44d2abdc498f9e8e"
+git-tree-sha1 = "57312c7ecad39566319ccf5aa717a20788eb8c1f"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.21"
+version = "0.7.18"
 
 [[Printf]]
 deps = ["Unicode"]
@@ -378,7 +300,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╟─14f86e56-3120-11ec-22e9-35bcbd81563e
-# ╠═40ff2323-3fa1-40fe-9dac-8a892597438c
+# ╟─40ff2323-3fa1-40fe-9dac-8a892597438c
 # ╟─d3354963-13ce-484a-b43a-35d2038ff47a
 # ╟─344eb54b-3de7-4d8d-9eb1-87887f3d30ec
 # ╠═13b254b0-ebb7-43b6-b4a7-479772a7f8a6
@@ -394,27 +316,11 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─5783a64b-c6ad-4f61-9a70-1c00abdc898d
 # ╟─5427266b-864d-4109-82b6-65723161b708
 # ╟─8b3fb77d-ea00-45e6-a80f-01a8de3e8f0e
-# ╟─6f649e28-ff2f-4b0f-ac91-4a70dd89f47c
-# ╟─98d2333f-aca4-409a-8abb-b521e799344e
-# ╟─3e15a41c-86b9-449c-bf6e-e2ac464bae0a
-# ╟─f44e84a7-d85c-42a4-9c2e-897d7c487f18
-# ╟─0002513c-78e0-49c1-888a-c1a6c5b14bbd
-# ╠═7a205069-193f-4894-b3d2-ae6bf88eb0e9
-# ╟─e02a73c8-f797-4742-b0db-3484afd8a3fe
-# ╟─7ce86558-27e2-4c88-90dd-93a21e34acde
-# ╟─9f43d5c9-3184-485a-9e3a-d125b8c9e5d8
-# ╟─e7997c25-5e31-4c4f-8fb8-85d6711e1d34
-# ╟─629a534a-dea9-4458-8dd4-e284556214f0
-# ╟─ec25cf92-480b-4dcb-b56b-dd21459a7290
-# ╠═355cffca-f36e-492f-92a2-c45c09b9d394
-# ╟─1a0eb387-02e9-496f-b648-6ba7aa17c561
-# ╠═ef4b350e-d0cb-4b94-9508-31548f6e37ae
-# ╟─dd0f7d07-9f83-4a58-a508-8b625b4cff42
-# ╟─a1dadded-6840-4e71-9f60-f6ebfd92d2d3
-# ╠═8645be19-bab5-425e-9e81-ca27ebb59a39
-# ╟─ecc474c0-25e9-4207-8845-e7c0f9844f39
-# ╟─ad085593-bd9b-45bf-8cc9-074457df766f
-# ╟─92a87a40-95b4-4ed6-a70d-648b6945e0d1
-# ╟─b62c814d-fc2e-43d9-8e29-065692f605fb
+# ╠═6f649e28-ff2f-4b0f-ac91-4a70dd89f47c
+# ╠═98d2333f-aca4-409a-8abb-b521e799344e
+# ╠═f44e84a7-d85c-42a4-9c2e-897d7c487f18
+# ╠═9f43d5c9-3184-485a-9e3a-d125b8c9e5d8
+# ╠═ecc474c0-25e9-4207-8845-e7c0f9844f39
+# ╠═92a87a40-95b4-4ed6-a70d-648b6945e0d1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
